@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=DZL
-####################   CHANGE 'Your_Username' TO YOUR USERNAME   ####################
-Icon=dzl.png   
-####################   CHANGE 'Your_Username' TO YOUR USERNAME   ####################
-Exec=bash -c '/home/$USER/DZL/DZL.sh;$SHELL'
-Terminal=true
-Categories=Application;
