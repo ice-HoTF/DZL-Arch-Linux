@@ -8,7 +8,7 @@ By: ice_hotf
 \
 Supported Distros:
 \
-Tested with Debian 12. 
+Tested with Arch Linux. 
 \
 \
 Other Distros:
