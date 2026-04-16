@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 echo ""
 echo "Searching for Servers.. Please Wait!"
 echo ""
@@ -24,7 +25,7 @@ read -s -n1 -p $'
  1) Setup Server\n
  2) Favorites\n
  3) Options Favorites And Mods\n
- 4) Quit
+ 4) Quit\n
 \n' number
 done
 case ${number} in
@@ -42,19 +43,19 @@ sleep 0.5
 echo ""
 
 echo -e "\n
- Enter IP-Address:Port"
+ Enter IP-Address:Port\n"
 sleep 0.5
 read SSERVER
 sleep 0.5
 
 echo -e "\n
- Enter Query Port Number"
+ Enter Query Port Number\n"
 sleep 0.5
 read PPORT
 sleep 0.5
 
 echo -e "\n
- Enter Username"
+ Enter Username\n"
 sleep 0.5
 read NNAME
 sleep 0.5;;
@@ -79,13 +80,16 @@ if [[ -z "$list" ]]; then
     echo ""
     echo "No Favorites Added!"
     echo ""
-    exit
+    main
 fi
 
 echo "Select By Number:"
-select file in $list
+select file in $list "Main Menu"
 do
-    if [ -n "$file" ]; then
+    if [[ "$file" == "Main Menu" ]]; then
+        main
+        return
+    elif [ -n "$file" ]; then
         echo "Launching: $file"
         sh /home/$USER/DZL/Favorites/$file
         break
@@ -117,7 +121,7 @@ read -s -n1 -p $'
 \n
  1) Remove A Server From Favorites\n
  2) Remove All Mods\n
- 3) Exit\n
+ 3) Main Menu\n
 \n' number
 done
 
@@ -132,20 +136,21 @@ if [[ -z "$rlist" ]]; then
     echo ""
     echo "No Favorites Added!"
     echo ""
-    exit
-
+    main
 fi
 
 echo "Select By Number To Delete:"
 select rfile in $rlist
 do
     if [ -n "$rfile" ]; then
+        echo ""
         echo "You deleted: $rfile"
         rm /home/$USER/DZL/Favorites/$rfile
-        exit
+        submenur1
     else
+        echo ""
         echo "Invalid selection"
-        exit
+        submenur1
     fi
 done
 exit
@@ -164,11 +169,12 @@ read -p $'\n
             sleep 0.1
      	    rm -r -f /home/$USER/.steam/steam/steamapps/common/DayZ/@*
 
-exit 1;;
+main;;
 
 "3") ######################################################################################
 
-    exit;;
+main;;
+#    exit;;
 esac
 
 }
@@ -287,19 +293,9 @@ echo "[${SELF}][debug] ${@}"
 #}
 
 check_dir() {
-  debug "Checking system-wide for directory: ${1}"
-
-  # search for an existing dir matching $1 anywhere
-  if find / -type d -path "${1}" -print -quit 2>/dev/null >/dev/null; then
-    debug "Directory found system-wide, skipping creation"
-    return 0
-  fi
-
-  # not found → create it (with parents)
-  mkdir -p "${1}" || {
-    echo "Error: could not create ${1}" >&2
-    return 1
-  }
+    if [[ ! -d "${1}" ]]; then
+        mkdir -p "${1}" || { echo "Error: could not create ${1}" >&2; return 1; }
+    fi
 }
 
 check_dep() {
@@ -373,13 +369,13 @@ sleep 0.25
 missing=0
 
 unset number
-until [[ $number == +([1-5]) ]] ; do
+until [[ $number == +([1-4]) ]] ; do
 read -s -n1 -p $'
 \n
  1) Join Server\n
  2) Add To Favorites\n
  3) Edit Server Mods (For This Server Only)\n
- 4) Quit
+ 4) Main Menu
 \n' number
 done
 case $number in
@@ -398,7 +394,7 @@ case $number in
     submenu1
     ;;
     [4])
-    exit
+    main
     ;;
         *)
         echo "invalid answer, please try again"
@@ -543,19 +539,17 @@ fi
 done
 
 if (( missing == 1 )); then
-
-   echo -e "\n
- Please Wait While Steam Download The Mods."
-   sleep 10
-   until [ ! -d "/home/$USER/.steam/steam/steamapps/workshop/temp/221100" ] && sleep 5 && [ ! -d "/home/$USER/.steam/steam/steamapps/workshop/temp/221100" ];
-   do
-   echo -e "\n
- ..Downloading Mods. Please wait.."
-   sleep 10
-   done
-echo ""
-   echo -e "\n
- Mods Finished Downloading."
+    local acf="$HOME/.steam/steam/steamapps/workshop/appworkshop_221100.acf"
+    echo -e "\n Please Wait While Steam Downloads The Mods."
+    sleep 2
+    until [[ -f "$acf" ]]; do
+        sleep 2
+    done
+    while grep -q '"NeedsDownload"[[:space:]]*"1"' "$acf"; do
+        echo -e "\n ..Downloading Mods. Please wait.."
+        sleep 2
+    done
+    echo -e "\n Mods Finished Downloading."
 fi
     echo ""
     missing=0
@@ -582,16 +576,20 @@ fi
  Launch command for this server: \n\n steam -applaunch 221100 \"-mod=$mods\" -connect=$SSERVER --port ${PPORT} -name=${NNAME} -nolauncher -world=empty"
 echo ""
 
-read -p $'\n
- Press " Enter " to Launch DayZ And Join The Server
-\n' foo
+#read -p $'\n
+# Press " Enter " to Launch DayZ And Join The Server
+#\n' foo
 
-echo -e "\n
- Starting DayZ.. Please Wait..
-\n";
-
+read -s -n1 -p $'\n Press " Enter " to Launch DayZ or " Esc " to go back to Main Menu\n' foo
+echo ""
+echo ""
+if [[ $foo == $'\e' ]]; then
+    echo -e "\n Going back to Main Menu...\n"
+    main
+    return
+fi
+echo -e "\n Starting DayZ.. Please Wait..\n"
 steam -applaunch 221100 "-mod=$mods" -connect=${SSERVER} --port ${PPORT} -name=${NNAME} -nolauncher -world=empty
-
 echo ""
 exit
 }
@@ -615,6 +613,8 @@ done
 echo ""
 }
 
+trap 'echo -e "\n Exiting...\n"; exit 0' SIGINT SIGTERM
+
 launch_game() {
 read -p $'\n
  Press " Enter " to Launch DayZ And Join The Server
@@ -624,7 +624,7 @@ echo -e "\n
  Starting DayZ.. Please Wait..
 \n";
 steam -applaunch 221100 "-mod=$mods" -connect=${SSERVER} --port ${PPORT} -name=${NNAME} -nolauncher -world=empty
-exit;
+exit 0;
 }
 
 
