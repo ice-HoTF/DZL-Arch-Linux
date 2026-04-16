@@ -19,9 +19,9 @@ Replace it with yours.
 \
 \
 \
-**FLATPAK STEAM NOT SUPPORTED!**
+**FLATPAK STEAM NOT TESTED/SUPPORTED!**
 \
-This script only works with the official steam package: https://wiki.debian.org/Steam
+This script was only tested with the official steam package: https://wiki.debian.org/Steam
 \
 \
 **Dependencies:**
