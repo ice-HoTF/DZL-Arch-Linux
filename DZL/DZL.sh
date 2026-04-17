@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-echo ""
-echo "Map Count Setting:"
-sudo sysctl -w vm.max_map_count=1048576
-echo ""
+# "Map Count Setting:"
+sudo sysctl -w vm.max_map_count=1048576 > /dev/null 2>&1
+
+# To make it persistent: Run 'sudo su' in the Terminal and then run: echo "vm.max_map_count=1048576" >> /etc/sysctl.conf
 #####################################################################################################################################
 ### DZL ###
 #####################################################################################################################################
