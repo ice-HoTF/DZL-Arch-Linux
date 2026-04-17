@@ -15,6 +15,9 @@ unset number
 until [[ $number == +([1-4]) ]] ; do
 
 read -s -n1 -p $'
+╔═══════════════════════════════╗\n
+║    DZL - DayZ Mod Launcher    ║\n
+╚═══════════════════════════════╝\n
  Select:\n
  1) Setup Server\n
  2) Favorites\n
