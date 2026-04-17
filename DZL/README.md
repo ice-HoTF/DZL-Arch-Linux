@@ -51,7 +51,7 @@ jq
 **How To:**
 \
 \
-1: Extract <DZL-Beta-Linux-main.zip> and Open Terminal in the 'DZL-Beta-Linux-main' Folder.
+1: Extract <DZL.zip> and Open Terminal in the Extracted Folder.
 \
 \
 2: Install DZL by running <install_DZL.sh> in the Terminal:
